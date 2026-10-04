@@ -4,11 +4,11 @@ $emailDestinataire = "white.sunshine.thunder@gmail.com"
 
 function Invoke-Script {
     param(
-        [string]$NomScript, 
+        [string]$NomScript,
         [switch]$EstAlerte
     )
-    $chemin = Join-Path -Path $dossierBureau -ChildPath$NomScript
-    
+    $chemin = Join-Path -Path $dossierBureau -ChildPath $NomScript
+
     if (Test-Path $chemin) {
         Write-Host "`n[+] Exécution de $NomScript..." -ForegroundColor Yellow
         if ($EstAlerte) {
@@ -38,11 +38,11 @@ while (-not $quitter) {
     Write-Host "-----------------------------------------------------" -ForegroundColor DarkGray
     Write-Host "Q. Quitter" -ForegroundColor Red
     Write-Host "=====================================================" -ForegroundColor Cyan
-    
+
     $choix = Read-Host "Entrez votre choix (1-6 ou Q)"
-    
+
     switch ($choix) {
-        "1" { 
+        "1" {
             Invoke-Script "Check-Connectivity.ps1"
             Invoke-Script "Get-SystemInventory.ps1"
             Invoke-Script "Get-PatchesInventory.ps1"
@@ -55,15 +55,15 @@ while (-not $quitter) {
         "3" { Invoke-Script "Get-SystemInventory.ps1" }
         "4" { Invoke-Script "Get-PatchesInventory.ps1" }
         "5" { Invoke-Script "Test-PatchCompliance.ps1" }
-        "6" { 
-            Invoke-Script "New-SecurityReport.ps1" 
+        "6" {
+            Invoke-Script "New-SecurityReport.ps1"
             Invoke-Script "Send-PatchAlert.ps1" -EstAlerte
         }
-        "Q" { $quitter =$true }
-        "q" { $quitter =$true }
+        "Q" { $quitter = $true }
+        "q" { $quitter = $true }
         default { Write-Host "`nChoix invalide, veuillez réessayer." -ForegroundColor Yellow }
     }
-    
+
     if (-not $quitter) {
         Write-Host "`nAppuyez sur Entrée pour revenir au menu..." -ForegroundColor DarkGray
         $null = Read-Host
