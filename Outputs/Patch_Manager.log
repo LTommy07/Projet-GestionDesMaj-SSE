@@ -1,0 +1,19 @@
+﻿04/10/2026 22:01:52; Début de l'inventaire des correctifs
+04/10/2026 22:01:54; PC01; 10 correctifs recensés
+04/10/2026 22:01:55; PC02; 9 correctifs recensés
+04/10/2026 22:01:55; Inventaire des correctifs généré : C:\Users\local-admin\Desktop\Patches_Inventory.csv
+04/10/2026 22:01:55; Début du contrôle de conformité (3 KB requis)
+04/10/2026 22:01:57; Taux de conformité du parc : 50 %
+04/10/2026 22:01:57; ComplianceReport.csv généré : C:\Users\local-admin\Desktop\ComplianceReport.csv
+04/10/2026 22:01:57; Début de l'audit
+04/10/2026 22:01:57; PC01; Accessible
+04/10/2026 22:01:57; PC01; Non conforme; KB5066791
+04/10/2026 22:01:57; PC02; Accessible
+04/10/2026 22:01:57; PC02; Conforme
+04/10/2026 22:01:57; Rapport généré
+04/10/2026 22:01:57; Fin de l'audit
+04/10/2026 22:01:59; Notification envoyée à white.sunshine.thunder@gmail.com
+04/10/2026 22:05:54; Début de l'inventaire des correctifs
+04/10/2026 22:05:55; PC01; 10 correctifs recensés
+04/10/2026 22:05:56; PC02; 9 correctifs recensés
+04/10/2026 22:05:56; Inventaire des correctifs généré : C:\Users\local-admin\Desktop\Patches_Inventory.csv

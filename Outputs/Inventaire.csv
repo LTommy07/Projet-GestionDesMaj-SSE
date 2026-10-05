@@ -1,0 +1,3 @@
+"Poste";"Adresse IP";"Windows";"Architecture";"Dernier démarrage";"Windows Update";"État";"Modele";"VersionBios";"RAM (Go)";"Disque C Libre";"Dernière MAJ";"Nombre MAJ"
+"PC01";"192.168.10.11";"Microsoft Windows 10 Pro";"64-bit";"04/10/2026";"Running";"Accessible";"VMware20,1";"VMW201.00V.24006586.B64.2406042154";"3";"15.18";"04/10/2026";"10"
+"PC02";"192.168.10.12";"Microsoft Windows 10 Pro";"64-bit";"04/10/2026";"Running";"Accessible";"VMware20,1";"VMW201.00V.24006586.B64.2406042154";"3";"10.57";"04/10/2026";"9"
