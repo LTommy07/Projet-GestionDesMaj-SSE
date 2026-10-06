@@ -1,8 +1,18 @@
-﻿$fichierInventaire = "C:\Users\local-admin\Desktop\computers.txt"
+﻿# ==================================================================================================
+# Get-SystemInventory.ps1 – Partie 2 : inventaire du parc
+# Rôle : pour chaque poste, indique s'il est accessible puis, via PowerShell Remoting (WinRM), collecte ses caractéristiques système et son état de Patch Management.
+# Entrée : computers.txt (NOM;IP)
+# Sortie : tableau à l'écran + Inventaire.csv (lu ensuite par New-SecurityReport.ps1).
+# Principe : un poste éteint ou en erreur WinRM n'arrête jamais le script ; l'état est simplement noté dans la colonne État.
+# ==================================================================================================
+
+$fichierInventaire = "C:\Users\local-admin\Desktop\computers.txt"
 $cheminCSV = "C:\Users\local-admin\Desktop\Inventaire.csv"
 
+# Liste qui cumule un objet par poste (plus efficace qu'un tableau agrandi avec +=).
 $inventaireGlobal = [System.Collections.Generic.List[PSCustomObject]]::new()
 
+# -Encoding Default : encodage ANSI de Windows, le même dans tous les scripts pour que les accents des CSV restent lisibles.
 $ordinateurs = Get-Content -Path $fichierInventaire -Encoding Default
 
 foreach ($ligne in $ordinateurs) {
@@ -10,8 +20,11 @@ foreach ($ligne in $ordinateurs) {
 
     $nom, $ip = $ligne -split ";"
     
+    # Étape 1 : on teste la disponibilité AVANT toute commande distante, pour ne pas attendre un long délai d'expiration sur un poste éteint.
     if (Test-Connection -ComputerName $ip -Count 1 -Quiet) {
         try {
+            # Étape 2 : collecte distante via WinRM. Le bloc entre accolades s'exécute SUR le poste distant et renvoie un seul objet. 
+	    # -ErrorAction Stop transforme toute erreur en exception, interceptée par le catch plus bas.
             $donneesDistantes = Invoke-Command -ComputerName $ip -ErrorAction Stop -ScriptBlock {
                 $cs   = Get-CimInstance -ClassName Win32_ComputerSystem
                 $os   = Get-CimInstance -ClassName Win32_OperatingSystem
@@ -42,6 +55,7 @@ foreach ($ligne in $ordinateurs) {
                     }
                 }
 
+                # Objet renvoyé au poste d'administration ; ses propriétés sont réutilisées juste après pour remplir la ligne de l'inventaire.
                 [PSCustomObject]@{
                     Modele          = $cs.Model
                     Bios            = $bios.SMBIOSBIOSVersion
@@ -56,6 +70,7 @@ foreach ($ligne in $ordinateurs) {
                 }
             }
 
+            # Poste accessible : on assemble la ligne de l'inventaire à partir des données distantes.
             $machine = [PSCustomObject]@{
                 Poste               = $nom
                 'Adresse IP'        = $ip
@@ -73,6 +88,7 @@ foreach ($ligne in $ordinateurs) {
             }
 
         } catch {
+            # Poste joignable au ping mais WinRM en échec : le message d'erreur est conservé dans la colonne État et le script continue.
             $machine = [PSCustomObject]@{
                 Poste               = $nom
                 'Adresse IP'        = $ip
@@ -91,6 +107,7 @@ foreach ($ligne in $ordinateurs) {
         }
 
     } else {
+        # Poste qui ne répond pas au ping : état Inaccessible, les autres colonnes restent vides.
         $machine = [PSCustomObject]@{
             Poste               = $nom
             'Adresse IP'        = $ip
@@ -108,11 +125,13 @@ foreach ($ligne in $ordinateurs) {
         }
     }
     
+    # Ajoute la ligne du poste (quel que soit son état) à l'inventaire global.
     $inventaireGlobal.Add($machine)
 }
 
 Write-Host "`n--- Inventaire du Parc ---`n" -ForegroundColor Cyan
 
+# Colonnes du tableau affiché à l'écran (largeur fixe pour ne pas tronquer le message d'état). Le CSV, lui, contient toutes les colonnes.
 $formatColonnes = @(
     @{ Label = "Poste"; Expression = { $_.Poste }; Width = 15 }
     @{ Label = "Adresse IP"; Expression = { $_.'Adresse IP' }; Width = 18 }

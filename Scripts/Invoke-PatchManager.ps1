@@ -1,7 +1,17 @@
+﻿# ==================================================================================================
+# Invoke-PatchManager.ps1 – Script maître : menu interactif du Patch Management
+# Rôle : point d'entrée unique de la solution. Affiche un menu et lance, selon le choix, un script ou toute la chaîne d'audit.
+# Prérequis : tous les scripts du projet, computers.txt et required-patches.txt doivent se trouver dans le dossier ci-dessous.
+# Option 1 : audit complet (connectivité, inventaire système, inventaire des correctifs, conformité, rapport HTML, alerte). Options 2 à 6 : une seule étape.
+# ==================================================================================================
+
+# Paramètres : dossier des scripts et adresses utilisées pour l'alerte e-mail (aucun mot de passe ici).
 $dossierBureau = "C:\Users\local-admin\Desktop"
 $emailExpediteur = "white.sunshine.thunder@gmail.com"
 $emailDestinataire = "white.sunshine.thunder@gmail.com"
 
+# Lance un script du dossier à partir de son nom. Vérifie d'abord qu'il existe (sinon message d'erreur et le menu continue).
+# Le commutateur -EstAlerte ajoute l'expéditeur et le destinataire, nécessaires seulement pour Send-PatchAlert.ps1.
 function Invoke-Script {
     param(
         [string]$NomScript,
@@ -21,6 +31,7 @@ function Invoke-Script {
     }
 }
 
+# Boucle du menu : elle tourne jusqu'à ce que l'utilisateur choisisse Q.
 $quitter = $false
 
 while (-not $quitter) {
@@ -41,6 +52,9 @@ while (-not $quitter) {
 
     $choix = Read-Host "Entrez votre choix (1-6 ou Q)"
 
+    # Option 1 : chaîne complète, dans l'ordre des dépendances (chaque script produit le fichier lu par le suivant). 
+    # Options 2 à 5 : une étape.
+    # Option 6 : rapport + alerte, qui suppose que Inventaire.csv et ComplianceReport.csv existent déjà.
     switch ($choix) {
         "1" {
             Invoke-Script "Check-Connectivity.ps1"
